@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tensorflow</title>
+    <!-- Load TensorFlow.js. This is required to use coco-ssd model. -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"> </script>
+    <!-- Load the coco-ssd model. -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"> </script>
+</head>
+
+<body>
+    <div class="camera">
+        <video id="video">Video stream not available.</video>
+        <button id="startbutton">Take photo</button>
+        <button id="detectbutton">Detect</button>
+    </div>
+    <canvas id="canvas"> </canvas>
+    <div class="output">
+        <img id="photo" alt="The screen capture will appear in this box." />
+    </div>
+
+    <!-- Place your code in the script tag below. You can also use an external .js file -->
+    <script>
+        // Notice there is no 'import' statement. 'cocoSsd' and 'tf' is
+        // available on the index-page because of the script tag above.
+
+        const photoButton = document.getElementById('detectbutton');
+        const photo = document.getElementById('photo');
+
+        const detect = async () => {
+            const canvas = document.getElementById('canvas');
+            const canvasCtx = canvas.getContext('2d');
+            canvasCtx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const img = canvas.toDataURL("image/png");
+
+            console.log('PLS LOAD MODEL');
+
+            // Load the model.
+            cocoSsd.load().then(model => {
+                console.log('DETECTING OBJECT?');
+                // detect objects in the image.
+                model.detect(canvas).then(predictions => {
+                    console.log('Predictions: ', predictions);
+                });
+            });
+        }
+
+        photoButton.addEventListener('click', detect);
+    </script>
+    <script src="tensorflow/public/script.js"></script>
+</body>
+
+</html>
