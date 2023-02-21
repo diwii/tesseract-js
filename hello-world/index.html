@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello Tesseract</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/4.0.2/tesseract.min.js"
+        integrity="sha512-vZRnBYWI8WC/oFLigZxKuHqJ0Wx9A7O57cLWNJCNrSfsKLJnCz+DmrCKXqSiOFPIDbhw18aDMGFFMYuQxdwM+w=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+
+<body>
+    <!-- Photo -->
+
+    <div class="camera">
+        <video id="video">Video stream not available.</video>
+        <button id="startbutton">Take photo</button>
+        <button id="detectbutton">Detect</button>
+    </div>
+    <canvas id="canvas"> </canvas>
+    <div class="output">
+        <img id="photo" alt="The screen capture will appear in this box." />
+    </div>
+    <script src="capture-photo/public/script.js"></script>
+
+    <!-- Tesseract -->
+
+    <script>
+        const { setLogging } = Tesseract;
+        setLogging(true);
+
+        const { createWorker } = Tesseract;
+
+        const photoButton = document.getElementById('detectbutton');
+        const photo = document.getElementById('photo');
+
+        const detect = async () => {
+            const canvas = document.getElementById('canvas');
+            const canvasCtx = canvas.getContext('2d');
+            canvasCtx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const img = canvas.toDataURL("image/png");
+
+            const worker = await createWorker({
+                workerPath: 'http://localhost:8080/hello-world/public/worker/worker.min.js',
+                langPath: 'http://localhost:8080/hello-world/public/lang/',
+                corePath: 'http://localhost:8080/hello-world/public/core/tesseract-core.wasm.js'
+            });
+
+            (async () => {
+                await worker.loadLanguage('eng');
+                await worker.initialize('eng');
+                const { data: { text } } = await worker.recognize(img);
+                console.log(text);
+                await worker.terminate();
+            })();
+        }
+
+        photoButton.addEventListener('click', detect);
+    </script>
+</body>
+
+</html>
