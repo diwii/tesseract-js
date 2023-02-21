@@ -6,7 +6,7 @@ const port = process.env.PORT || 8080;
 
 // Static files js, img....
 // https://expressjs.com/en/starter/static-files.html
-app.use('/capture-photo', express.static(path.join(__dirname, '/capture-photo/public')))
+app.use('/capture-photo/public', express.static(path.join(__dirname, '/capture-photo/public')))
 
 // Send files
 app.get('/', function(req, res) {
