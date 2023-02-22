@@ -14,6 +14,30 @@ https://developer.mozilla.org/en-US/docs/Web/API/Media_Capture_and_Streams_API/T
 
 https://pyimagesearch.com/2018/09/19/pip-install-opencv/
 
+`pip install virtualenv`
+
+`virtualenv _virtualenv`
+
+`source _virtualenv/bin/activate`
+
+`pip install opencv-contrib-python`
+
+`pip install imutils`
+
+`pip install scikit-image`
+
+`deactivate`
+
+https://pyimagesearch.com/2018/09/17/opencv-ocr-and-text-recognition-with-tesseract/
+
+`sudo apt install tesseract-ocr`
+
+`source _virtualenv/bin/activate`
+
+`pip install pytesseract`
+
+`python ocr_license_plate.py -d 1 -c 1 --input "license_plates/group1"`
+
 https://docs.opencv.org/4.x/d0/d84/tutorial_js_usage.html
 
 https://www.geeksforgeeks.org/license-plate-recognition-with-opencv-and-tesseract-ocr/

@@ -1,2 +1,7 @@
 **/node_modules/**
 **/DUMPS/**
+
+#Python
+**/_virtualenv/**
+**/__pycache__/**
+*.py[cod]

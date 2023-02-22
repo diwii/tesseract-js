@@ -17,6 +17,7 @@
         <video id="video">Video stream not available.</video>
         <button id="startbutton">Take photo</button>
         <button id="detectbutton">Detect</button>
+        <input type="file" id="uploader">
     </div>
     <canvas id="canvas"> </canvas>
     <div class="output">
@@ -33,13 +34,30 @@
         const { createWorker } = Tesseract;
 
         const photoButton = document.getElementById('detectbutton');
+        const uploader = document.getElementById('uploader');
         const photo = document.getElementById('photo');
 
-        const detect = async () => {
+        const detect = async ({ target: { files = null } } ) => {
+            console.log(files);
+            let img;
+
             const canvas = document.getElementById('canvas');
             const canvasCtx = canvas.getContext('2d');
-            canvasCtx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            const img = canvas.toDataURL("image/png");
+
+            if (!files) {
+                canvasCtx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                img = canvas.toDataURL("image/png");
+            } else {
+                
+                img = files[0];
+
+                reader = new FileReader();
+                reader.onload = () => {
+                    photo.src = reader.result;
+                }
+
+                reader.readAsDataURL(img);
+            }
 
             const worker = await createWorker({
                 workerPath: 'http://localhost:8080/hello-world/public/worker/worker.min.js',
@@ -57,6 +75,7 @@
         }
 
         photoButton.addEventListener('click', detect);
+        uploader.addEventListener('change', detect);
     </script>
 </body>
 
