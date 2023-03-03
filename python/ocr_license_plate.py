@@ -4,6 +4,12 @@ from imutils import paths
 import argparse
 import imutils
 import cv2
+import os
+
+# ROOT_DIR = os.path.dirname(os.path.abspath(__file__)) # This is your Project Root
+
+# print(ROOT_DIR)
+# exit()
 
 def cleanup_text(text):
     # strip out non-ASCII text so we can draw the text on the image

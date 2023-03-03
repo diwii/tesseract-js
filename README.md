@@ -12,6 +12,8 @@ https://developer.mozilla.org/en-US/docs/Web/API/Media_Capture_and_Streams_API/T
 
 ## OPENCV
 
+https://towardsdatascience.com/russian-car-plate-detection-with-opencv-and-tesseractocr-dce3d3f9ff5c
+
 https://pyimagesearch.com/2018/09/19/pip-install-opencv/
 
 `pip install virtualenv`
@@ -35,6 +37,10 @@ https://pyimagesearch.com/2018/09/17/opencv-ocr-and-text-recognition-with-tesser
 `source _virtualenv/bin/activate`
 
 `pip install pytesseract`
+
+`tesseract --help-oem`
+
+`tesseract --help-psm`
 
 `python ocr_license_plate.py -d 1 -c 1 --input "license_plates/group1"`
 
@@ -63,6 +69,8 @@ https://spin.atomicobject.com/2022/01/17/text-recognition-tesseract-js/
 https://github.com/naptha/tesseract.js/blob/master/docs/local-installation.md
 
 https://tessdata.projectnaptha.com/ <- LANGUAGES
+
+https://github.com/tesseract-ocr/tessdata_best <- LANGUAGES
 
 ## TENSORFLOW
 

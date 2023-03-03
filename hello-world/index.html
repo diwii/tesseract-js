@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hello Tesseract</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/4.0.2/tesseract.min.js"
+    <script src="hello-world/public/tesseract.min.js"
         integrity="sha512-vZRnBYWI8WC/oFLigZxKuHqJ0Wx9A7O57cLWNJCNrSfsKLJnCz+DmrCKXqSiOFPIDbhw18aDMGFFMYuQxdwM+w=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
@@ -23,6 +23,7 @@
     <div class="output">
         <img id="photo" alt="The screen capture will appear in this box." />
     </div>
+    <div id="log"></div>
     <script src="capture-photo/public/script.js"></script>
 
     <!-- Tesseract -->
@@ -37,7 +38,7 @@
         const uploader = document.getElementById('uploader');
         const photo = document.getElementById('photo');
 
-        const detect = async ({ target: { files = null } } ) => {
+        const detect = async ({ target: { files = null } }) => {
             console.log(files);
             let img;
 
@@ -48,7 +49,7 @@
                 canvasCtx.drawImage(video, 0, 0, canvas.width, canvas.height);
                 img = canvas.toDataURL("image/png");
             } else {
-                
+
                 img = files[0];
 
                 reader = new FileReader();
@@ -62,12 +63,16 @@
             const worker = await createWorker({
                 workerPath: 'http://localhost:8080/hello-world/public/worker/worker.min.js',
                 langPath: 'http://localhost:8080/hello-world/public/lang/',
-                corePath: 'http://localhost:8080/hello-world/public/core/tesseract-core.wasm.js'
+                corePath: 'http://localhost:8080/hello-world/public/core/tesseract-core.wasm.js',
+                logger: progressUpdate
             });
 
             (async () => {
                 await worker.loadLanguage('eng');
                 await worker.initialize('eng');
+                await worker.setParameters({
+                    tessedit_pageseg_mode: 6
+                });
                 const { data: { text } } = await worker.recognize(img);
                 console.log(text);
                 await worker.terminate();
@@ -76,6 +81,43 @@
 
         photoButton.addEventListener('click', detect);
         uploader.addEventListener('change', detect);
+
+        function progressUpdate(packet) {
+            console.log(packet);
+            var log = document.getElementById('log');
+
+            if (log.firstChild && log.firstChild.status === packet.status) {
+                if ('progress' in packet) {
+                    var progress = log.firstChild.querySelector('progress')
+                    progress.value = packet.progress
+                }
+            } else {
+                var line = document.createElement('div');
+                line.status = packet.status;
+                var status = document.createElement('div')
+                status.className = 'status'
+                status.appendChild(document.createTextNode(packet.status))
+                line.appendChild(status)
+
+                if ('progress' in packet) {
+                    var progress = document.createElement('progress')
+                    progress.value = packet.progress
+                    progress.max = 1
+                    line.appendChild(progress)
+                }
+
+
+                if (packet.status == 'done') {
+                    var pre = document.createElement('pre')
+                    pre.appendChild(document.createTextNode(packet.data.data.text))
+                    line.innerHTML = ''
+                    line.appendChild(pre)
+
+                }
+
+                log.insertBefore(line, log.firstChild)
+            }
+        }
     </script>
 </body>
 

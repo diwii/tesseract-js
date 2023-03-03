@@ -148,18 +148,23 @@ class PyImageSearchANPR:
         # return a 2-tuple of the license plate ROI and the contour
         # associated with it
         # return (roi, lpCnt)
-        return (roi, lpCnt)
+        return (licensePlate, lpCnt)
 
     def build_tesseract_options(self, psm=7):
+        psm = 6 #debug
+        print("psm: {}".format(psm))
         # # tell Tesseract to only OCR alphanumeric characters
         alphanumeric = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
         options = "-c tessedit_char_whitelist={}".format(alphanumeric)
+        # options += "-c load_system_dawg=1"
+        # options += "-c load_freq_dawg=1"
         # options = ""
         # options = ("-l eng --oem 1 --psm 7")
         # set the PSM mode
         options += " --psm {}".format(psm)
-        # options += " --oem 1"
+        options += " --oem 0"
         # options += " -l eng"
+        options += ' --tessdata-dir "/home/valdis/aws/tesseract/python/public/lang"'
         # return the built options string
         return options
     
@@ -185,8 +190,15 @@ class PyImageSearchANPR:
         if lp is not None:
             # OCR the license plate
             options = self.build_tesseract_options(psm=psm)
-            lpText = pytesseract.image_to_string(lp, config=options)
+            # lpText = pytesseract.image_to_string(lp, config=options)
+            lpText = pytesseract.image_to_string(lp)
             self.debug_imshow("License Plate", lp)
+            
+            # opt = r'--tessdata-dir "/public/lang/"'
+            # opt = '--tessdata-dir="public/lang/"'
+            # data = pytesseract.run_and_get_output(image=lp, extension='txt', config=options)
+            # data = pytesseract.run_and_get_output(image=lp, extension='txt')
+            # print(data)
         # return a 2-tuple of the OCR'd license plate text along with
         # the contour associated with the license plate region
         return (lpText, lpCnt)
